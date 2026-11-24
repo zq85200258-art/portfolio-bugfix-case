@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LumenDesk — Client Portal</title>
+  <meta name="description" content="LumenDesk Client Portal portfolio demo for inspecting active studio projects and session behavior.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#main-content" aria-label="LumenDesk Client Portal">
+        <img class="brand-mark" src="assets/logo.svg" alt="" width="34" height="34">
+        <span class="brand-text">
+          <span class="brand-name">LumenDesk</span>
+          <span class="brand-sub">Client Portal</span>
+        </span>
+      </a>
+
+      <div class="header-meta">
+        <span class="demo-stamp">Portfolio Demo</span>
+        <a class="api-pill" id="header-api-pill" href="#api-settings" title="Configure API base URL">
+          <span class="status-dot status-dot--ok" id="header-api-dot" aria-hidden="true"></span>
+          <span id="header-api-label">API: same-origin</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="page-main">
+    <div class="container">
+      <!-- View 1: Sign-in -->
+      <section id="auth-view" class="auth-layout" aria-labelledby="auth-heading">
+        <div class="auth-editorial">
+          <p class="eyebrow">Client Access &middot; Portfolio Demo</p>
+          <h1 id="auth-heading" class="display-heading" tabindex="-1">Quiet visibility into active studio work.</h1>
+          <p class="lead-copy">
+            Sign in to check current deliverables and milestone status for your studio account.
+            This portal is a fictional portfolio demo built to inspect real cookie-session and cross-origin API behavior.
+          </p>
+
+          <hr class="editorial-rule">
+
+          <aside class="demo-card" aria-label="Fictional demo account">
+            <div class="demo-card-header">
+              <h2 class="demo-card-title">Demo Account</h2>
+              <button type="button" class="btn-link" id="fill-demo-btn">Fill demo credentials</button>
+            </div>
+            <dl class="credential-list">
+              <div class="credential-row">
+                <dt>Email</dt>
+                <dd>ava@northwind.example</dd>
+              </div>
+              <div class="credential-row">
+                <dt>Password</dt>
+                <dd>demo-password-only</dd>
+              </div>
+            </dl>
+            <p class="demo-card-note">
+              Fictional client profile (Ava Chen, Northwind Studio). Fields remain editable so you can also test invalid credentials.
+            </p>
+          </aside>
+        </div>
+
+        <div class="sheet">
+          <div class="sheet-header">
+            <h2 class="sheet-title">Sign in</h2>
+            <p class="sheet-subtitle">Session cookies are verified via <code>/api/me</code> after sign-in.</p>
+          </div>
+
+          <form id="login-form" class="form-stack" method="post" action="/api/login" novalidate>
+            <div class="field">
+              <label class="field-label" for="email-input">Email</label>
+              <input
+                class="input-control"
+                id="email-input"
+                name="email"
+                type="email"
+                autocomplete="username"
+                required
+                value="ava@northwind.example"
+                placeholder="you@studio.example"
+              >
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="password-input">Password</label>
+              <div class="password-wrap">
+                <input
+                  class="input-control"
+                  id="password-input"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  value="demo-password-only"
+                  placeholder="Enter password"
+                >
+                <button
+                  type="button"
+                  class="password-toggle"
+                  id="toggle-password-btn"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                >Show</button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="login-submit-btn" disabled>
+              <span class="btn-spinner" id="login-spinner" hidden aria-hidden="true"></span>
+              <span id="login-btn-label">Sign in</span>
+            </button>
+          </form>
+
+          <noscript>
+            <div class="notice notice--warning" role="alert">
+              <p class="notice-title">JavaScript is required to sign in</p>
+              <p class="notice-body">
+                Sign-in stays disabled until the client script loads so credentials are never submitted in a URL query string.
+              </p>
+            </div>
+          </noscript>
+
+          <div id="auth-notice" class="notice" role="alert" aria-live="polite" hidden>
+            <p class="notice-title" id="auth-notice-title"></p>
+            <p class="notice-body" id="auth-notice-body"></p>
+            <ul class="notice-trace" id="auth-notice-trace" hidden></ul>
+            <p class="notice-hint" id="auth-notice-hint" hidden></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 2: Authenticated Portal -->
+      <section id="portal-view" class="portal-shell" aria-labelledby="portal-heading" hidden>
+        <div class="portal-masthead">
+          <div class="portal-identity">
+            <p class="eyebrow">Active Session &middot; Client Portal</p>
+            <h1 id="portal-heading" class="portal-heading" tabindex="-1">Welcome back</h1>
+            <div class="portal-meta">
+              <span class="studio-badge" id="portal-studio"></span>
+              <span class="meta-sep" aria-hidden="true">&middot;</span>
+              <span class="portal-email" id="portal-email"></span>
+            </div>
+          </div>
+
+          <div class="portal-actions">
+            <button type="button" class="btn btn-secondary" id="refresh-projects-btn">Refresh</button>
+            <button type="button" class="btn btn-secondary" id="logout-btn">Sign out</button>
+          </div>
+        </div>
+
+        <div id="portal-notice" class="notice" role="alert" aria-live="polite" hidden>
+          <p class="notice-title" id="portal-notice-title"></p>
+          <p class="notice-body" id="portal-notice-body"></p>
+          <ul class="notice-trace" id="portal-notice-trace" hidden></ul>
+          <p class="notice-hint" id="portal-notice-hint" hidden></p>
+        </div>
+
+        <section class="ledger" aria-labelledby="projects-heading">
+          <div class="ledger-header">
+            <h2 id="projects-heading" class="ledger-title">Projects</h2>
+            <p class="ledger-summary" id="projects-summary">Loading&hellip;</p>
+          </div>
+
+          <div id="projects-loading" class="ledger-state" aria-busy="true" aria-live="polite">
+            <span class="sr-only">Loading projects</span>
+            <div class="skeleton-list" aria-hidden="true">
+              <div class="skeleton-row">
+                <div class="skeleton-bar skeleton-bar--title"></div>
+                <div class="skeleton-bar skeleton-bar--badge"></div>
+              </div>
+              <div class="skeleton-row">
+                <div class="skeleton-bar skeleton-bar--title"></div>
+                <div class="skeleton-bar skeleton-bar--badge"></div>
+              </div>
+            </div>
+          </div>
+
+          <ul id="projects-list" class="project-list" hidden></ul>
+
+          <div id="projects-empty" class="empty-state" hidden>
+            <h3 class="empty-state-title">No projects listed yet</h3>
+            <p class="empty-state-copy">
+              Your studio does not currently have active or delivered projects in this workspace.
+            </p>
+            <button type="button" class="btn btn-subtle" id="empty-refresh-btn">Check again</button>
+          </div>
+        </section>
+      </section>
+
+      <!-- Optional Collapsible Demo Notes -->
+      <div class="demo-notes-wrap">
+        <details class="demo-notes">
+          <summary>
+            <span class="summary-label">
+              <span class="summary-tag">Demo notes</span>
+              <span>How to observe same-origin and cross-origin behavior</span>
+            </span>
+            <svg class="summary-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </summary>
+          <div class="demo-notes-body">
+            <div class="notes-grid">
+              <div class="note-column">
+                <h3>1. Same-origin (<code>http://127.0.0.1:8000</code>)</h3>
+                <p>
+                  Open the portal directly from the FastAPI server with API base set to same-origin.
+                  Submit the demo credentials and watch the follow-up session check: in the BEFORE state,
+                  <code>POST /api/login</code> returns <code>200</code>, yet the immediate <code>GET /api/me</code> returns <code>401</code> and the portal stays signed out.
+                </p>
+              </div>
+              <div class="note-column">
+                <h3>2. Cross-origin (<code>5500</code> &rarr; <code>8000</code>)</h3>
+                <p>
+                  Serve this <code>frontend/</code> folder on port <code>5500</code> and point the API base URL below (or via <code>?api=http://127.0.0.1:8000</code>) to port <code>8000</code>.
+                  Because requests use JSON headers and <code>credentials: 'include'</code>, the browser sends a preflight request before sign-in and surfaces CORS rejections in the status panel and Network tab.
+                </p>
+              </div>
+            </div>
+            <p class="notes-footnote">
+              Tip: You can preset an allowed target (same-origin, <code>http://127.0.0.1:8000</code>, or <code>http://localhost:8000</code>) via <code>window.LUMENDESK_API</code> or the <code>?api=</code> query parameter. Disallowed external hosts are rejected.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="api-settings">
+    <div class="container footer-inner">
+      <div class="api-bar">
+        <div class="api-bar-top">
+          <label class="api-bar-label" for="api-base-input">API Base URL</label>
+          <div class="api-status-group">
+            <span id="api-active-display">Active: same-origin</span>
+            <span class="health-chip" id="api-health-chip">
+              <span class="status-dot" id="api-health-dot" aria-hidden="true"></span>
+              <span id="api-health-text">Health: unchecked</span>
+            </span>
+          </div>
+        </div>
+
+        <form id="api-base-form" class="api-bar-form" method="get" action="#api-settings" novalidate>
+          <input
+            class="input-control input-control--mono"
+            id="api-base-input"
+            name="apiBase"
+            type="url"
+            value="http://127.0.0.1:8000"
+            placeholder="http://127.0.0.1:8000 (leave empty for same-origin)"
+            aria-describedby="api-bar-feedback"
+          >
+          <div class="api-bar-actions">
+            <button type="submit" class="btn btn-secondary" id="api-apply-btn" disabled>Apply</button>
+            <button type="button" class="btn btn-subtle" id="api-same-origin-btn">Same-origin</button>
+            <button type="button" class="btn btn-subtle" id="api-health-btn">Check health</button>
+          </div>
+        </form>
+
+        <p id="api-bar-feedback" class="api-bar-feedback" aria-live="polite">
+          Currently using same-origin requests. Click Apply to test cross-origin requests against http://127.0.0.1:8000.
+        </p>
+      </div>
+
+      <div class="footer-colophon">
+        <span>LumenDesk Client Portal &middot; Fictional portfolio bugfix case study</span>
+        <span>All requests use <code>fetch</code> with <code>credentials: 'include'</code> and JSON headers.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
